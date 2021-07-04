@@ -62,7 +62,7 @@ For example, if you'd like to compile the AVX-512IFMA DummyFree-style low-latenc
     $ ./ht_csidh
 ```
 For example, if you'd like to compile the AVX-512F OAYT-style high-throughput implementation which uses the extra-dummy batching method, then the 2nd line is: 
-```make ht_csidh METHOD=EXTRA_DUMMY```
+```make ht_csidh STYLE=OAYT METHOD=EXTRA_DUMMY```
 
 
 ## References 
