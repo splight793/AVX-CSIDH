@@ -64,6 +64,10 @@ For example, if you'd like to compile the AVX-512IFMA DummyFree-style low-latenc
 For example, if you'd like to compile the AVX-512F OAYT-style high-throughput implementation which uses the extra-dummy batching method, then the 2nd line is: 
 ```make ht_csidh STYLE=OAYT METHOD=EXTRA_DUMMY```
 
+## Paper
+The paper regarding this work has been published in *IACR Transactions on Cryptographic Hardware and Embedded Systems, 2021(4), 618-649*.
+
+Paper online link is [here](https://tches.iacr.org/index.php/TCHES/article/view/9077).
 
 ## References 
   * [CVCCD+19] D. Cervantes-Vázquez, M. Chenu, J.-J. Chi-Domínguez, L. De Feo, F. Rodríguez Henríquez, and B. Smith. *Stronger and faster side-channel protections for csidh.* In P. Schwabe and N. Thériault, editors, Progress in Cryptology – LATINCRYPT 2019, pages 173–193. Springer International Publishing, 2019.
