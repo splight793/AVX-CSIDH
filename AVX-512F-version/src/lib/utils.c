@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -94,4 +94,26 @@ void mpi_conv_64to32(uint32_t *r, const uint64_t *a)
   r[13] = (uint32_t)(a[6]>>32);
   r[14] = (uint32_t) a[7];
   r[15] = (uint32_t)(a[7]>>32);
+}
+
+__m512i set_vector(const uint32_t a7, const uint32_t a6, const uint32_t a5, const uint32_t a4, 
+                   const uint32_t a3, const uint32_t a2, const uint32_t a1, const uint32_t a0)
+{
+  __m512i r;
+
+  ((uint64_t *)&r)[0] = a0; ((uint64_t *)&r)[1] = a1;
+  ((uint64_t *)&r)[2] = a2; ((uint64_t *)&r)[3] = a3;
+  ((uint64_t *)&r)[4] = a4; ((uint64_t *)&r)[5] = a5;
+  ((uint64_t *)&r)[6] = a6; ((uint64_t *)&r)[7] = a7;
+
+  return r;
+}
+
+void get_channel_8x1w(uint32_t *r, const htfe_t a, const int ch) 
+{
+  int i;
+
+  for(i = 0; i < HT_NWORDS; i++){
+    r[i] = (uint32_t) ((uint64_t *)&a[i])[ch];
+  }
 }

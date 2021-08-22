@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -21,5 +21,10 @@ void mpi_conv_52to43(uint64_t *r, const uint64_t *a, int rlen, int alen);
 void mpi_conv_43to52(uint64_t *r, const uint64_t *a, int rlen, int alen);
 void mpi_conv_43to64(uint64_t *r, const uint64_t *a, int rlen, int alen);
 void mpi_conv_64to43(uint64_t *r, const uint64_t *a, int rlen, int alen);
+
+__m512i set_vector(const uint64_t a7, const uint64_t a6, const uint64_t a5, const uint64_t a4, 
+                   const uint64_t a3, const uint64_t a2, const uint64_t a1, const uint64_t a0);
+void get_channel_8x1w(uint64_t *r, const htfe_t a, const int ch);
+void get_channel_2x4w(uint64_t *r, const llfe_t a, const int ch);
 
 #endif

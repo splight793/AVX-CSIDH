@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -239,7 +239,7 @@ void elligator_8x1w(htpoint_t Tplus, htpoint_t Tminus, const htpoint_t A)
   }
 
   for (i = 0; i < HT_NWORDS; i++) { 
-    vu[i] = VSET(u[7][i], u[6][i], u[5][i], u[4][i], u[3][i], u[2][i], u[1][i], u[0][i]);
+    vu[i] = set_vector(u[7][i], u[6][i], u[5][i], u[4][i], u[3][i], u[2][i], u[1][i], u[0][i]);
     vR[i] = VSET1(ht_montR[i]);
   }
 

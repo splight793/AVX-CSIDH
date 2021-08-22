@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -154,7 +154,7 @@ static void action_8x1w(htpoint_t C, __m512i* visocnt, __m512i* e, const __m512i
   uint8_t fnsh[N] = { 0 }, isocnt[N] = { 0 };
   __m512i ec = VZERO, inf, bc, vone = VSET1(1), t, x;  
   htpoint A0, A1, T0, T1, G0, G1, K[HLMAX];
-  int count = 0, total = 0, i, j, m = 0, numba = NUMBA, n_noinf;
+  int count = 0, total = 0, i, j, m = 0, numba = NUMBA, n_inf;
 
   // Initialize SIMBA variables. 
   memcpy(ba, BATCHES, N);
@@ -214,9 +214,9 @@ static void action_8x1w(htpoint_t C, __m512i* visocnt, __m512i* e, const __m512i
         // combined
         inf = point_isinf_8x1w(&G0);
         inf = VOR(inf, point_isinf_8x1w(&G1));
-        n_noinf = 8 - VADDRDC(inf);
+        n_inf = VADDRDC(inf);
 
-        if (n_noinf >= 3) {
+        if (n_inf <= 5) {
           bc = u8_iszero_8x1w(VSHR(ec, 1));
           //////////////////////////////////////////////////////////
           // extra-dummy
@@ -310,16 +310,15 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
   uint64_t a64[8][8] = {0}, ad64[8][8] = {0}, one[8] = {1};
 
   // Extract the isogeny counter of each instance.
-  for(i = 0; i < N; i++)
-  {
-    llisocnt[0][i] = VEXTR64(VEXTR256(visocnt[i], 0), 0);
-    llisocnt[1][i] = VEXTR64(VEXTR256(visocnt[i], 0), 1);
-    llisocnt[2][i] = VEXTR64(VEXTR256(visocnt[i], 0), 2);
-    llisocnt[3][i] = VEXTR64(VEXTR256(visocnt[i], 0), 3);
-    llisocnt[4][i] = VEXTR64(VEXTR256(visocnt[i], 1), 0);
-    llisocnt[5][i] = VEXTR64(VEXTR256(visocnt[i], 1), 1);
-    llisocnt[6][i] = VEXTR64(VEXTR256(visocnt[i], 1), 2);
-    llisocnt[7][i] = VEXTR64(VEXTR256(visocnt[i], 1), 3);
+  for (i = 0; i < N; i++) {
+    llisocnt[0][i] = ((uint64_t *)&visocnt[i])[0];
+    llisocnt[1][i] = ((uint64_t *)&visocnt[i])[1];
+    llisocnt[2][i] = ((uint64_t *)&visocnt[i])[2];
+    llisocnt[3][i] = ((uint64_t *)&visocnt[i])[3];
+    llisocnt[4][i] = ((uint64_t *)&visocnt[i])[4];
+    llisocnt[5][i] = ((uint64_t *)&visocnt[i])[5];
+    llisocnt[6][i] = ((uint64_t *)&visocnt[i])[6];
+    llisocnt[7][i] = ((uint64_t *)&visocnt[i])[7];
   }
 
   // convert coefficients from Montgomery domain to number domain,
@@ -329,25 +328,15 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
   gfp_mont2num_8x1w(A0.z, A0.z);
 
   // extract the curve coefficient for each instance
-  for(i = 0; i < HT_NWORDS; i++) {
-    a29[0][i] = VEXTR64(VEXTR256(A0.y[i], 0), 0);
-    a29[1][i] = VEXTR64(VEXTR256(A0.y[i], 0), 1);
-    a29[2][i] = VEXTR64(VEXTR256(A0.y[i], 0), 2);
-    a29[3][i] = VEXTR64(VEXTR256(A0.y[i], 0), 3);
-    a29[4][i] = VEXTR64(VEXTR256(A0.y[i], 1), 0);
-    a29[5][i] = VEXTR64(VEXTR256(A0.y[i], 1), 1);
-    a29[6][i] = VEXTR64(VEXTR256(A0.y[i], 1), 2);
-    a29[7][i] = VEXTR64(VEXTR256(A0.y[i], 1), 3);
+  get_channel_8x1w(a29[0], A0.y, 0); get_channel_8x1w(a29[1], A0.y, 1);
+  get_channel_8x1w(a29[2], A0.y, 2); get_channel_8x1w(a29[3], A0.y, 3);
+  get_channel_8x1w(a29[4], A0.y, 4); get_channel_8x1w(a29[5], A0.y, 5);
+  get_channel_8x1w(a29[6], A0.y, 6); get_channel_8x1w(a29[7], A0.y, 7);
 
-    ad29[0][i] = VEXTR64(VEXTR256(A0.z[i], 0), 0);
-    ad29[1][i] = VEXTR64(VEXTR256(A0.z[i], 0), 1);
-    ad29[2][i] = VEXTR64(VEXTR256(A0.z[i], 0), 2);
-    ad29[3][i] = VEXTR64(VEXTR256(A0.z[i], 0), 3);
-    ad29[4][i] = VEXTR64(VEXTR256(A0.z[i], 1), 0);
-    ad29[5][i] = VEXTR64(VEXTR256(A0.z[i], 1), 1);
-    ad29[6][i] = VEXTR64(VEXTR256(A0.z[i], 1), 2);
-    ad29[7][i] = VEXTR64(VEXTR256(A0.z[i], 1), 3);
-  }
+  get_channel_8x1w(ad29[0], A0.z, 0); get_channel_8x1w(ad29[1], A0.z, 1);
+  get_channel_8x1w(ad29[2], A0.z, 2); get_channel_8x1w(ad29[3], A0.z, 3);
+  get_channel_8x1w(ad29[4], A0.z, 4); get_channel_8x1w(ad29[5], A0.z, 5);
+  get_channel_8x1w(ad29[6], A0.z, 6); get_channel_8x1w(ad29[7], A0.z, 7);
 
   // convert from radix-29 to radix-64
   for (i = 0; i < 8; i++) {
@@ -371,14 +360,14 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
 
   // extract the secret exponent for each instance
   for (i = 0; i < N; i++) {
-    lle[0][i] = VEXTR64(VEXTR256(e[i], 0), 0); 
-    lle[1][i] = VEXTR64(VEXTR256(e[i], 0), 1); 
-    lle[2][i] = VEXTR64(VEXTR256(e[i], 0), 2); 
-    lle[3][i] = VEXTR64(VEXTR256(e[i], 0), 3); 
-    lle[4][i] = VEXTR64(VEXTR256(e[i], 1), 0); 
-    lle[5][i] = VEXTR64(VEXTR256(e[i], 1), 1); 
-    lle[6][i] = VEXTR64(VEXTR256(e[i], 1), 2); 
-    lle[7][i] = VEXTR64(VEXTR256(e[i], 1), 3); 
+    lle[0][i] = ((uint64_t *)&e[i])[0];
+    lle[1][i] = ((uint64_t *)&e[i])[1];
+    lle[2][i] = ((uint64_t *)&e[i])[2];
+    lle[3][i] = ((uint64_t *)&e[i])[3];
+    lle[4][i] = ((uint64_t *)&e[i])[4];
+    lle[5][i] = ((uint64_t *)&e[i])[5];
+    lle[6][i] = ((uint64_t *)&e[i])[6];
+    lle[7][i] = ((uint64_t *)&e[i])[7];
   }
 
   // ---------------------------------------------------------------------------
@@ -403,8 +392,8 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
 
   // form the final (8x1)-way result
   for (i = 0; i < HT_NWORDS; i++) {
-    C->y[i] = VSET(a29[7][i], a29[6][i], a29[5][i], a29[4][i], a29[3][i], a29[2][i], a29[1][i], a29[0][i]);
-    C->z[i] = VSET(ad29[7][i], ad29[6][i], ad29[5][i], ad29[4][i], ad29[3][i], ad29[2][i], ad29[1][i], ad29[0][i]);
+    C->y[i] = set_vector(a29[7][i], a29[6][i], a29[5][i], a29[4][i], a29[3][i], a29[2][i], a29[1][i], a29[0][i]);
+    C->z[i] = set_vector(ad29[7][i], ad29[6][i], ad29[5][i], ad29[4][i], ad29[3][i], ad29[2][i], ad29[1][i], ad29[0][i]);
   }
   gfp_num2mont_8x1w(C->y, C->y);
   gfp_num2mont_8x1w(C->z, C->z);

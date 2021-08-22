@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -930,9 +930,6 @@ void gfp_addsubi_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
   const __m512i bp0 = VMBLEND(0x0F, bd[0], pp0);
   const __m512i bp1 = VMBLEND(0x0F, bd[1], pp1);
   const __m512i bp2 = VMBLEND(0x0F, bd[2], pp2);
-  // const __m512i nd0 = VMBLEND(0x0F, VZERO, bd[0]);
-  // const __m512i nd1 = VMBLEND(0x0F, VZERO, bd[1]);
-  // const __m512i nd2 = VMBLEND(0x0F, VZERO, bd[2]);
   const __m512i vbmask = VSET1(LL_BMASK);
   __m512i rs0, rs1, rs2, carry;
 
@@ -963,9 +960,6 @@ void gfp_subaddi_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
   __m512i pp0 = VSET(ll_pmul2[9] , ll_pmul2[6], ll_pmul2[3], ll_pmul2[0], ll_pmul2[9] , ll_pmul2[6], ll_pmul2[3], ll_pmul2[0]);
   __m512i pp1 = VSET(ll_pmul2[10], ll_pmul2[7], ll_pmul2[4], ll_pmul2[1], ll_pmul2[10], ll_pmul2[7], ll_pmul2[4], ll_pmul2[1]);
   __m512i pp2 = VSET(ll_pmul2[11], ll_pmul2[8], ll_pmul2[5], ll_pmul2[2], ll_pmul2[11], ll_pmul2[8], ll_pmul2[5], ll_pmul2[2]);
-  // const __m512i bn0 = VMBLEND(0xF0, VZERO, bd[0]);
-  // const __m512i bn1 = VMBLEND(0xF0, VZERO, bd[1]);
-  // const __m512i bn2 = VMBLEND(0xF0, VZERO, bd[2]);
   const __m512i pd0 = VMBLEND(0x0F, pp0, bd[0]);
   const __m512i pd1 = VMBLEND(0x0F, pp1, bd[1]);
   const __m512i pd2 = VMBLEND(0x0F, pp2, bd[2]);
@@ -999,9 +993,6 @@ void gfp_addsubc_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
   const __m512i pp0 = VSET(ll_pmul2[9] , ll_pmul2[6], ll_pmul2[3], ll_pmul2[0], ll_pmul2[9] , ll_pmul2[6], ll_pmul2[3], ll_pmul2[0]);
   const __m512i pp1 = VSET(ll_pmul2[10], ll_pmul2[7], ll_pmul2[4], ll_pmul2[1], ll_pmul2[10], ll_pmul2[7], ll_pmul2[4], ll_pmul2[1]);
   const __m512i pp2 = VSET(ll_pmul2[11], ll_pmul2[8], ll_pmul2[5], ll_pmul2[2], ll_pmul2[11], ll_pmul2[8], ll_pmul2[5], ll_pmul2[2]);
-  // const __m512i bn0 = VMBLEND(0xF0, VZERO, bd[0]);
-  // const __m512i bn1 = VMBLEND(0xF0, VZERO, bd[1]);
-  // const __m512i bn2 = VMBLEND(0xF0, VZERO, bd[2]);
   const __m512i pd0 = VMBLEND(0x0F, pp0, bd[0]);
   const __m512i pd1 = VMBLEND(0x0F, pp1, bd[1]);
   const __m512i pd2 = VMBLEND(0x0F, pp2, bd[2]);
@@ -1016,9 +1007,6 @@ void gfp_addsubc_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
 
   // r = r - 2p | s = s - d
   rs0 = VSUB(rs0, pd0);  rs1 = VSUB(rs1, pd1); rs2 = VSUB(rs2, pd2);
-  // rs0 = VMSUB(rs0, 0xF0, rs0, bd0);
-  // rs1 = VMSUB(rs1, 0xF0, rs1, bd1);
-  // rs2 = VMSUB(rs2, 0xF0, rs2, bd2);
 
   // check r and s are respectively postive or negative 
   carry = VSRA(rs0, LL_BRADIX);
@@ -1113,9 +1101,6 @@ void gfp_subaddc_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
   const __m512i bp0 = VMBLEND(0x0F, bd[0], pp0);
   const __m512i bp1 = VMBLEND(0x0F, bd[1], pp1);
   const __m512i bp2 = VMBLEND(0x0F, bd[2], pp2);
-  // const __m512i nd0 = VMBLEND(0x0F, VZERO, bd[0]);
-  // const __m512i nd1 = VMBLEND(0x0F, VZERO, bd[1]);
-  // const __m512i nd2 = VMBLEND(0x0F, VZERO, bd[2]);
   const __m512i vbmask = VSET1(LL_BMASK);
   __m512i rs0, rs1, rs2, carry, smask;
 

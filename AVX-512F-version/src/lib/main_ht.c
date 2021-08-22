@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -103,7 +103,7 @@ void test_action()
 
   // form the vector of private key
   for (i = 0; i < N; i++) 
-    vsk[i] = VSET(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
+    vsk[i] = set_vector(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
 
   // intialize the vector of base curve
   for (i = 0; i < HT_NWORDS; i++) {
@@ -128,16 +128,15 @@ void test_action()
   gfp_mul_8x1w(t1, vPK.y, t0);
   gfp_mont2num_8x1w(t0, t1);
 
-  for (i = 0; i < HT_NWORDS; i++) {
-    pk_a[i] = VEXTR32(VEXTR256(t0[i], 0), 0);
-    pk_b[i] = VEXTR32(VEXTR256(t0[i], 0), 2);
-    pk_c[i] = VEXTR32(VEXTR256(t0[i], 0), 4);
-    pk_d[i] = VEXTR32(VEXTR256(t0[i], 0), 6);
-    pk_e[i] = VEXTR32(VEXTR256(t0[i], 1), 0);
-    pk_f[i] = VEXTR32(VEXTR256(t0[i], 1), 2);
-    pk_g[i] = VEXTR32(VEXTR256(t0[i], 1), 4);
-    pk_h[i] = VEXTR32(VEXTR256(t0[i], 1), 6);
-  }
+  get_channel_8x1w(pk_a, t0, 0);
+  get_channel_8x1w(pk_b, t0, 1);
+  get_channel_8x1w(pk_c, t0, 2);
+  get_channel_8x1w(pk_d, t0, 3);
+  get_channel_8x1w(pk_e, t0, 4);
+  get_channel_8x1w(pk_f, t0, 5);
+  get_channel_8x1w(pk_g, t0, 6);
+  get_channel_8x1w(pk_h, t0, 7);
+
   mpi_conv_29to32(r32, pk_a, HT_NWORDS, HT_NWORDS);
   mpi_print("  - A : ", r32, 16);
   mpi_conv_29to32(r32, pk_b, HT_NWORDS, HT_NWORDS);
@@ -171,16 +170,14 @@ void test_action()
   gfp_mul_8x1w(t1, vSS.y, t0);
   gfp_mont2num_8x1w(t0, t1);
 
-  for (i = 0; i < HT_NWORDS; i++) {
-    ss_a[i] = VEXTR32(VEXTR256(t0[i], 0), 0);
-    ss_b[i] = VEXTR32(VEXTR256(t0[i], 0), 2);
-    ss_c[i] = VEXTR32(VEXTR256(t0[i], 0), 4);
-    ss_d[i] = VEXTR32(VEXTR256(t0[i], 0), 6);
-    ss_e[i] = VEXTR32(VEXTR256(t0[i], 1), 0);
-    ss_f[i] = VEXTR32(VEXTR256(t0[i], 1), 2);
-    ss_g[i] = VEXTR32(VEXTR256(t0[i], 1), 4);
-    ss_h[i] = VEXTR32(VEXTR256(t0[i], 1), 6);
-  }
+  get_channel_8x1w(ss_a, t0, 0);
+  get_channel_8x1w(ss_b, t0, 1);
+  get_channel_8x1w(ss_c, t0, 2);
+  get_channel_8x1w(ss_d, t0, 3);
+  get_channel_8x1w(ss_e, t0, 4);
+  get_channel_8x1w(ss_f, t0, 5);
+  get_channel_8x1w(ss_g, t0, 6);
+  get_channel_8x1w(ss_h, t0, 7);
   mpi_conv_29to32(r32, ss_a, HT_NWORDS, HT_NWORDS);
   mpi_print("  - A : ", r32, 16);
   mpi_conv_29to32(r32, ss_b, HT_NWORDS, HT_NWORDS);
@@ -248,7 +245,7 @@ void test_multi_actions(int round)
 
     // form the vector of private key
     for (i = 0; i < N; i++) 
-      vsk[i] = VSET(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
+      vsk[i] = set_vector(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
     
     // intialize the vector of base curve
     for (i = 0; i < HT_NWORDS; i++) {
@@ -279,16 +276,14 @@ void test_multi_actions(int round)
     gfp_mul_8x1w(t1, vSS.y, t0);
     gfp_mont2num_8x1w(t0, t1);
 
-    for (i = 0; i < HT_NWORDS; i++) {
-      ss_a[i] = VEXTR32(VEXTR256(t0[i], 0), 0);
-      ss_b[i] = VEXTR32(VEXTR256(t0[i], 0), 2);
-      ss_c[i] = VEXTR32(VEXTR256(t0[i], 0), 4);
-      ss_d[i] = VEXTR32(VEXTR256(t0[i], 0), 6);
-      ss_e[i] = VEXTR32(VEXTR256(t0[i], 1), 0);
-      ss_f[i] = VEXTR32(VEXTR256(t0[i], 1), 2);
-      ss_g[i] = VEXTR32(VEXTR256(t0[i], 1), 4);
-      ss_h[i] = VEXTR32(VEXTR256(t0[i], 1), 6);
-    }
+    get_channel_8x1w(ss_a, t0, 0);
+    get_channel_8x1w(ss_b, t0, 1);
+    get_channel_8x1w(ss_c, t0, 2);
+    get_channel_8x1w(ss_d, t0, 3);
+    get_channel_8x1w(ss_e, t0, 4);
+    get_channel_8x1w(ss_f, t0, 5);
+    get_channel_8x1w(ss_g, t0, 6);
+    get_channel_8x1w(ss_h, t0, 7);
 
     wrong = memcmp(ss_a, ss_b, HT_NWORDS*sizeof(uint32_t));
     wrong |= memcmp(ss_c, ss_d, HT_NWORDS*sizeof(uint32_t));
@@ -318,7 +313,7 @@ void timing_action()
 
   // initialize AVX512 vector of private key
   for (i = 0; i < N; i++) 
-    vsk[i] = VSET(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
+    vsk[i] = set_vector(sk_h[i], sk_g[i], sk_f[i], sk_e[i], sk_d[i], sk_c[i], sk_b[i], sk_a[i]);
 
   for (i = 0; i < HT_NWORDS; i++) {
     vE.y[i] = VSET1(E[0][i]);

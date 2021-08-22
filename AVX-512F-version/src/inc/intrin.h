@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -40,21 +40,21 @@
 #define VSET1(X)              _mm512_set1_epi64(X)
 #define VSET(X7, X6, X5, X4, X3, X2, X1, X0) \
                               _mm512_set_epi64(X7, X6, X5, X4, X3, X2, X1, X0)
-#define VEXTR256(X, Y)        _mm512_extracti64x4_epi64(X, Y)
-// (TODO: replace by other instructions)
-#define VEXTR64(X, Y)         _mm256_extract_epi64(X, Y) 
-#define VEXTR32(X, Y)         _mm256_extract_epi32(X, Y) 
 
 // permutation & shuffle operations
-#define VPERM(X, Y)           _mm512_permutex_epi64(X, Y)             
+#define VPERM(X, Y)           _mm512_permutex_epi64(X, Y)  
+#define VPERMV(X, Y)          _mm512_permutexvar_epi64(X, Y)             
 #define VSHUF(X, Y)           _mm512_shuffle_epi32(X, Y)              
 #define VALIGNR(X, Y, Z)      _mm512_alignr_epi64(X, Y ,Z)
 #define VZALIGNR(W, X, Y, Z)  _mm512_maskz_alignr_epi64(W, X, Y, Z)
 #define VMBLEND(X, Y, Z)      _mm512_mask_blend_epi64(X, Y, Z)
-#define VPERMV(X, Y)          _mm512_permutexvar_epi64(X, Y)  
 
-// element reduction operations (TODO: replace by other instructions)
-#define VORRDC(X)             _mm512_reduce_or_epi64(X)
-#define VADDRDC(X)            _mm512_reduce_add_epi64(X)
+#define VADDRDC(X) \
+((uint64_t *)&X)[0]+((uint64_t *)&X)[1]+((uint64_t *)&X)[2]+((uint64_t *)&X)[3]+\
+((uint64_t *)&X)[4]+((uint64_t *)&X)[5]+((uint64_t *)&X)[6]+((uint64_t *)&X)[7]
+
+#define VORRDC(X) \
+((uint64_t *)&X)[0]|((uint64_t *)&X)[1]|((uint64_t *)&X)[2]|((uint64_t *)&X)[3]|\
+((uint64_t *)&X)[4]|((uint64_t *)&X)[5]|((uint64_t *)&X)[6]|((uint64_t *)&X)[7]
 
 #endif

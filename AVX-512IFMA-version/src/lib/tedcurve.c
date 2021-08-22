@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -226,7 +226,7 @@ void elligator_8x1w(htpoint_t Tplus, htpoint_t Tminus, const htpoint_t A)
   }
 
   for (i = 0; i < HT_NWORDS; i++) { 
-    vu[i] = VSET(u[7][i], u[6][i], u[5][i], u[4][i], u[3][i], u[2][i], u[1][i], u[0][i]);
+    vu[i] = set_vector(u[7][i], u[6][i], u[5][i], u[4][i], u[3][i], u[2][i], u[1][i], u[0][i]);
     vR[i] = VSET1(ht_montR[i]);
   }
 
@@ -521,16 +521,17 @@ void elligator_2x4w(llpoint_t Tplus, llpoint_t Tminus, const llpoint_t A)
   gfp_subaddc_2x4w(t0, t1, t3);         //  t0 = a-2d    | a+d
   gfp_subaddc_2x4w(t6, t0, t0);         //  t6 = 2(a-2d) | 2(a+d)=A in Montgomery curve
 
+  vec_permll_2x4w(t6, t6);
+
   do {
     mpi64_random(u64);
   } while (mpi64_compare(u64, u64_pdiv2) > 0);// repeat if u > (p-1)/2 
   mpi_conv_64to43(u, u64, LL_NWORDS, 8);  // convert to radix-43      
-  
 
   // vu = u' | u'
-  vu[0] = VSET(u[9] , u[6], u[3], u[0], u[9] , u[6], u[3], u[0]);
-  vu[1] = VSET(u[10], u[7], u[4], u[1], u[10], u[7], u[4], u[1]);
-  vu[2] = VSET(u[11], u[8], u[5], u[2], u[11], u[8], u[5], u[2]); 
+  vu[0] = set_vector(u[9] , u[6], u[3], u[0], u[9] , u[6], u[3], u[0]);
+  vu[1] = set_vector(u[10], u[7], u[4], u[1], u[10], u[7], u[4], u[1]);
+  vu[2] = set_vector(u[11], u[8], u[5], u[2], u[11], u[8], u[5], u[2]); 
   // vone = 1 | 1
   vone[0] = VSET(ll_montR[9] , ll_montR[6], ll_montR[3], ll_montR[0], ll_montR[9] , ll_montR[6], ll_montR[3], ll_montR[0]);
   vone[1] = VSET(ll_montR[10], ll_montR[7], ll_montR[4], ll_montR[1], ll_montR[10], ll_montR[7], ll_montR[4], ll_montR[1]);
@@ -559,15 +560,11 @@ void elligator_2x4w(llpoint_t Tplus, llpoint_t Tminus, const llpoint_t A)
   vec_blend_2x4w(t0, t1, t4, 0x0F);     //  t0 = C(u^2-1)     | u^2
   gfp_mul_2x4w(t0, t3, t0);             //  t0 = [C(u^2-1)]^2 | (Au)^2
 
-  vec_blend_2x4w(t3, t0, vu, 0x0F);     //  t3 = [C(u^2-1)]^2           | u
+  vec_blend_2x4w(t3, t0, alpha, 0x0F);  //  t3 = [C(u^2-1)]^2           | 0
   vec_permll_2x4w(t0, t0);              //  t0 = (Au)^2                 | (Au)^2
-  vec_blend_2x4w(t0, t0, alpha, 0x0F);  //  t0 = (Au)^2                 | 0
-  gfp_addsubc_2x4w(t0, t3, t0);         //  t0 = [C(u^2-1)]^2 + (Au)^2  | u
+  vec_blend_2x4w(t0, t0, t6, 0x0F);     //  t0 = (Au)^2                 | A
+  gfp_addsubc_2x4w(t0, t3, t0);         //  t0 = [C(u^2-1)]^2 + (Au)^2  | -A
 
-  vec_permll_2x4w(t6, t6);              //  t6 = A |  A
-  gfp_addsubc_2x4w(t6, alpha, t6);      // !t6 = A | -A
-
-  vec_blend_2x4w(t0, t0, t6, 0x0F);     // !t0 = [C(u^2-1)]^2 + (Au)^2 | -A
   vec_permlh_2x4w(t5, t1);              //  t5 = AC(u^2-1)             | C(u^2-1)
   vec_blend_2x4w(t4, t5, t4, 0x0F);     // !t4 = AC(u^2-1)             | u^2
   gfp_mul_2x4w(t5, t0, t4);             //  t5 = t                     | -Au^2

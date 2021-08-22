@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -178,7 +178,7 @@ static void action_8x1w(htpoint_t C, __m512i* visocnt, __m512i* e, const __m512i
   uint8_t fnsh[N] = { 0 }, mask, isocnt[N] = { 0 };
   __m512i ec = VZERO, inf, bc, vone = VSET1(1), t;  
   htpoint A0, A1, T0, T1, T2, T3, G0, G1, K[HLMAX], Z;
-  int count = 0, total = 0, si, i, j, m = 0, numba = NUMBA, n_noinf;
+  int count = 0, total = 0, si, i, j, m = 0, numba = NUMBA, n_inf;
 
   // Initialize SIMBA variables. 
   memcpy(ba, BATCHES, N);
@@ -237,9 +237,9 @@ static void action_8x1w(htpoint_t C, __m512i* visocnt, __m512i* e, const __m512i
 
         // combined
         inf = point_isinf_8x1w(&G0);
-        n_noinf = 8 - VADDRDC(inf);
+        n_inf = VADDRDC(inf);
 
-        if (n_noinf >= 5) {
+        if (n_inf <= 3) {
           bc = u8_iszero_8x1w(VSHR(ec, 1));
           point_cswap_8x1w(&G0, &G1, VOR(bc, inf));
           yISOG_8x1w(K, &A1, &G0, &A0, ba[m][i]);
@@ -317,16 +317,15 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
   uint64_t ad43[8][LL_NWORDS] = {0}, ad52[8][HT_NWORDS] = {0};
 
   // Extract the isogeny counter of each instance.
-  for(i = 0; i < N; i++)
-  {
-    llisocnt[0][i] = VEXTR64(VEXTR256(visocnt[i], 0), 0);
-    llisocnt[1][i] = VEXTR64(VEXTR256(visocnt[i], 0), 1);
-    llisocnt[2][i] = VEXTR64(VEXTR256(visocnt[i], 0), 2);
-    llisocnt[3][i] = VEXTR64(VEXTR256(visocnt[i], 0), 3);
-    llisocnt[4][i] = VEXTR64(VEXTR256(visocnt[i], 1), 0);
-    llisocnt[5][i] = VEXTR64(VEXTR256(visocnt[i], 1), 1);
-    llisocnt[6][i] = VEXTR64(VEXTR256(visocnt[i], 1), 2);
-    llisocnt[7][i] = VEXTR64(VEXTR256(visocnt[i], 1), 3);
+  for (i = 0; i < N; i++) {
+    llisocnt[0][i] = ((uint64_t *)&visocnt[i])[0];
+    llisocnt[1][i] = ((uint64_t *)&visocnt[i])[1];
+    llisocnt[2][i] = ((uint64_t *)&visocnt[i])[2];
+    llisocnt[3][i] = ((uint64_t *)&visocnt[i])[3];
+    llisocnt[4][i] = ((uint64_t *)&visocnt[i])[4];
+    llisocnt[5][i] = ((uint64_t *)&visocnt[i])[5];
+    llisocnt[6][i] = ((uint64_t *)&visocnt[i])[6];
+    llisocnt[7][i] = ((uint64_t *)&visocnt[i])[7];
   }
 
   // Convert coefficients from Montgomery domain to number domain,
@@ -336,25 +335,15 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
   gfp_mont2num_8x1w(A0.z, A0.z);
 
   // extract the curve coefficient for each instance
-  for(i = 0; i < HT_NWORDS; i++) {
-    a52[0][i] = VEXTR64(VEXTR256(A0.y[i], 0), 0);
-    a52[1][i] = VEXTR64(VEXTR256(A0.y[i], 0), 1);
-    a52[2][i] = VEXTR64(VEXTR256(A0.y[i], 0), 2);
-    a52[3][i] = VEXTR64(VEXTR256(A0.y[i], 0), 3);
-    a52[4][i] = VEXTR64(VEXTR256(A0.y[i], 1), 0);
-    a52[5][i] = VEXTR64(VEXTR256(A0.y[i], 1), 1);
-    a52[6][i] = VEXTR64(VEXTR256(A0.y[i], 1), 2);
-    a52[7][i] = VEXTR64(VEXTR256(A0.y[i], 1), 3);
+  get_channel_8x1w(a52[0], A0.y, 0); get_channel_8x1w(a52[1], A0.y, 1);
+  get_channel_8x1w(a52[2], A0.y, 2); get_channel_8x1w(a52[3], A0.y, 3);
+  get_channel_8x1w(a52[4], A0.y, 4); get_channel_8x1w(a52[5], A0.y, 5);
+  get_channel_8x1w(a52[6], A0.y, 6); get_channel_8x1w(a52[7], A0.y, 7);
 
-    ad52[0][i] = VEXTR64(VEXTR256(A0.z[i], 0), 0);
-    ad52[1][i] = VEXTR64(VEXTR256(A0.z[i], 0), 1);
-    ad52[2][i] = VEXTR64(VEXTR256(A0.z[i], 0), 2);
-    ad52[3][i] = VEXTR64(VEXTR256(A0.z[i], 0), 3);
-    ad52[4][i] = VEXTR64(VEXTR256(A0.z[i], 1), 0);
-    ad52[5][i] = VEXTR64(VEXTR256(A0.z[i], 1), 1);
-    ad52[6][i] = VEXTR64(VEXTR256(A0.z[i], 1), 2);
-    ad52[7][i] = VEXTR64(VEXTR256(A0.z[i], 1), 3);
-  }
+  get_channel_8x1w(ad52[0], A0.z, 0); get_channel_8x1w(ad52[1], A0.z, 1);
+  get_channel_8x1w(ad52[2], A0.z, 2); get_channel_8x1w(ad52[3], A0.z, 3);
+  get_channel_8x1w(ad52[4], A0.z, 4); get_channel_8x1w(ad52[5], A0.z, 5);
+  get_channel_8x1w(ad52[6], A0.z, 6); get_channel_8x1w(ad52[7], A0.z, 7);
 
   // convert from radix-52 to radix-43
   for (i = 0; i < 8; i++) {
@@ -364,22 +353,22 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
 
   // form the (2x4)-way limb vector set
   for (i = 0; i < 8; i++) {
-    llA[i][0] = VSET(a43[i][9] , a43[i][6], a43[i][3], a43[i][0], ad43[i][9] , ad43[i][6], ad43[i][3], ad43[i][0]);
-    llA[i][1] = VSET(a43[i][10], a43[i][7], a43[i][4], a43[i][1], ad43[i][10], ad43[i][7], ad43[i][4], ad43[i][1]);
-    llA[i][2] = VSET(a43[i][11], a43[i][8], a43[i][5], a43[i][2], ad43[i][11], ad43[i][8], ad43[i][5], ad43[i][2]);
+    llA[i][0] = set_vector(a43[i][9] , a43[i][6], a43[i][3], a43[i][0], ad43[i][9] , ad43[i][6], ad43[i][3], ad43[i][0]);
+    llA[i][1] = set_vector(a43[i][10], a43[i][7], a43[i][4], a43[i][1], ad43[i][10], ad43[i][7], ad43[i][4], ad43[i][1]);
+    llA[i][2] = set_vector(a43[i][11], a43[i][8], a43[i][5], a43[i][2], ad43[i][11], ad43[i][8], ad43[i][5], ad43[i][2]);
     gfp_num2mont_2x4w(llA[i], llA[i]);  // convert to Montgomery domain
   }
 
   // extract the secret exponent for each instance
   for (i = 0; i < N; i++) {
-    lle[0][i] = VEXTR64(VEXTR256(e[i], 0), 0); 
-    lle[1][i] = VEXTR64(VEXTR256(e[i], 0), 1); 
-    lle[2][i] = VEXTR64(VEXTR256(e[i], 0), 2); 
-    lle[3][i] = VEXTR64(VEXTR256(e[i], 0), 3); 
-    lle[4][i] = VEXTR64(VEXTR256(e[i], 1), 0); 
-    lle[5][i] = VEXTR64(VEXTR256(e[i], 1), 1); 
-    lle[6][i] = VEXTR64(VEXTR256(e[i], 1), 2); 
-    lle[7][i] = VEXTR64(VEXTR256(e[i], 1), 3); 
+    lle[0][i] = ((uint64_t *)&e[i])[0];
+    lle[1][i] = ((uint64_t *)&e[i])[1];
+    lle[2][i] = ((uint64_t *)&e[i])[2];
+    lle[3][i] = ((uint64_t *)&e[i])[3];
+    lle[4][i] = ((uint64_t *)&e[i])[4];
+    lle[5][i] = ((uint64_t *)&e[i])[5];
+    lle[6][i] = ((uint64_t *)&e[i])[6];
+    lle[7][i] = ((uint64_t *)&e[i])[7];
   }
 
   // ---------------------------------------------------------------------------
@@ -393,31 +382,8 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
   for (i = 0; i < 8; i++) gfp_mont2num_2x4w(llC[i], llC[i]);
 
   for (i = 0; i < 8; i++) {
-    a43[i][0]  = VEXTR64(VEXTR256(llC[i][0], 1), 0);
-    a43[i][1]  = VEXTR64(VEXTR256(llC[i][1], 1), 0);
-    a43[i][2]  = VEXTR64(VEXTR256(llC[i][2], 1), 0);
-    a43[i][3]  = VEXTR64(VEXTR256(llC[i][0], 1), 1);
-    a43[i][4]  = VEXTR64(VEXTR256(llC[i][1], 1), 1);
-    a43[i][5]  = VEXTR64(VEXTR256(llC[i][2], 1), 1);
-    a43[i][6]  = VEXTR64(VEXTR256(llC[i][0], 1), 2);
-    a43[i][7]  = VEXTR64(VEXTR256(llC[i][1], 1), 2);
-    a43[i][8]  = VEXTR64(VEXTR256(llC[i][2], 1), 2);
-    a43[i][9]  = VEXTR64(VEXTR256(llC[i][0], 1), 3);
-    a43[i][10] = VEXTR64(VEXTR256(llC[i][1], 1), 3);
-    a43[i][11] = VEXTR64(VEXTR256(llC[i][2], 1), 3);
-
-    ad43[i][0]  = VEXTR64(VEXTR256(llC[i][0], 0), 0);
-    ad43[i][1]  = VEXTR64(VEXTR256(llC[i][1], 0), 0);
-    ad43[i][2]  = VEXTR64(VEXTR256(llC[i][2], 0), 0);
-    ad43[i][3]  = VEXTR64(VEXTR256(llC[i][0], 0), 1);
-    ad43[i][4]  = VEXTR64(VEXTR256(llC[i][1], 0), 1);
-    ad43[i][5]  = VEXTR64(VEXTR256(llC[i][2], 0), 1);
-    ad43[i][6]  = VEXTR64(VEXTR256(llC[i][0], 0), 2);
-    ad43[i][7]  = VEXTR64(VEXTR256(llC[i][1], 0), 2);
-    ad43[i][8]  = VEXTR64(VEXTR256(llC[i][2], 0), 2);
-    ad43[i][9]  = VEXTR64(VEXTR256(llC[i][0], 0), 3);
-    ad43[i][10] = VEXTR64(VEXTR256(llC[i][1], 0), 3);
-    ad43[i][11] = VEXTR64(VEXTR256(llC[i][2], 0), 3);
+    get_channel_2x4w(a43[i], llC[i], 4);
+    get_channel_2x4w(ad43[i], llC[i], 0);
 
     mpi43_carryp(a43[i]);
     mpi43_carryp(ad43[i]);
@@ -428,8 +394,8 @@ void action(htpoint_t C, const __m512i *sk, const htpoint_t A)
 
   // form the final (8x1)-way result
   for (i = 0; i < HT_NWORDS; i++) {
-    C->y[i] = VSET(a52[7][i],  a52[6][i],  a52[5][i],  a52[4][i],  a52[3][i],  a52[2][i],  a52[1][i],  a52[0][i]);
-    C->z[i] = VSET(ad52[7][i], ad52[6][i], ad52[5][i], ad52[4][i], ad52[3][i], ad52[2][i], ad52[1][i], ad52[0][i]);
+    C->y[i] = set_vector(a52[7][i],  a52[6][i],  a52[5][i],  a52[4][i],  a52[3][i],  a52[2][i],  a52[1][i],  a52[0][i]);
+    C->z[i] = set_vector(ad52[7][i], ad52[6][i], ad52[5][i], ad52[4][i], ad52[3][i], ad52[2][i], ad52[1][i], ad52[0][i]);
   }
 
   // convert from number domain to Montgomery domain 

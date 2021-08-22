@@ -1,7 +1,7 @@
 /**
  *******************************************************************************
- * @version 0.0.1
- * @date 2021-07-01
+ * @version 0.0.2
+ * @date 2021-08-22
  * @copyright Copyright © 2021 by University of Luxembourg.
  * @author Developed at SnT APSIA by: Hao Cheng.
  *******************************************************************************
@@ -98,19 +98,7 @@ void test_action()
   gfp_mul_2x4w(t1, z1, t0);    
   gfp_mont2num_2x4w(t0, t1);   
 
-  r43[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-  r43[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-  r43[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-  r43[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-  r43[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-  r43[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-  r43[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-  r43[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-  r43[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-  r43[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-  r43[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-  r43[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
-
+  get_channel_2x4w(r43, t0, 0);
   mpi_conv_43to64(r64, r43, LL_NWORDS, LL_NWORDS);
   mpi_print("  - PKA = 0x", r64, 8);
 
@@ -122,19 +110,7 @@ void test_action()
   gfp_mul_2x4w(t1, z1, t0);   
   gfp_mont2num_2x4w(t0, t1);  
 
-  r43[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-  r43[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-  r43[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-  r43[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-  r43[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-  r43[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-  r43[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-  r43[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-  r43[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-  r43[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-  r43[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-  r43[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
-
+  get_channel_2x4w(r43, t0, 0);
   mpi_conv_43to64(r64, r43, LL_NWORDS, LL_NWORDS);
   mpi_print("  - PKB = 0x", r64, 8);
 
@@ -148,19 +124,7 @@ void test_action()
   gfp_mul_2x4w(t1, z1, t0);   
   gfp_mont2num_2x4w(t0, t1);  
 
-  ssa[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-  ssa[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-  ssa[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-  ssa[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-  ssa[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-  ssa[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-  ssa[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-  ssa[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-  ssa[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-  ssa[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-  ssa[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-  ssa[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
-
+  get_channel_2x4w(ssa, t0, 0);
   mpi_conv_43to64(r64, ssa, LL_NWORDS, LL_NWORDS);
   mpi_print("  - SSA = 0x", r64, 8);
 
@@ -172,19 +136,7 @@ void test_action()
   gfp_mul_2x4w(t1, z1, t0);   
   gfp_mont2num_2x4w(t0, t1); 
 
-  ssb[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-  ssb[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-  ssb[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-  ssb[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-  ssb[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-  ssb[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-  ssb[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-  ssb[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-  ssb[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-  ssb[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-  ssb[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-  ssb[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
-
+  get_channel_2x4w(ssb, t0, 0);
   mpi_conv_43to64(r64, ssb, LL_NWORDS, LL_NWORDS);
   mpi_print("  - SSB = 0x", r64, 8);
 
@@ -229,19 +181,7 @@ void test_multi_actions(int round)
     vec_permzh_2x4w(t0, SS_a);   
     gfp_mul_2x4w(t1, z1, t0);   
     gfp_mont2num_2x4w(t0, t1);  
-
-    ssa[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-    ssa[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-    ssa[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-    ssa[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-    ssa[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-    ssa[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-    ssa[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-    ssa[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-    ssa[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-    ssa[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-    ssa[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-    ssa[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
+    get_channel_2x4w(ssa, t0, 0);
 
     // shared secret computation for Bob
     action_2x4w(SS_b, sk_b, PK_a);
@@ -250,19 +190,7 @@ void test_multi_actions(int round)
     vec_permzh_2x4w(t0, SS_b);  
     gfp_mul_2x4w(t1, z1, t0);   
     gfp_mont2num_2x4w(t0, t1);  
-
-    ssb[0] = VEXTR64(VEXTR256(t0[0], 0), 0);
-    ssb[1] = VEXTR64(VEXTR256(t0[1], 0), 0);
-    ssb[2] = VEXTR64(VEXTR256(t0[2], 0), 0);
-    ssb[3] = VEXTR64(VEXTR256(t0[0], 0), 1);
-    ssb[4] = VEXTR64(VEXTR256(t0[1], 0), 1);
-    ssb[5] = VEXTR64(VEXTR256(t0[2], 0), 1);
-    ssb[6] = VEXTR64(VEXTR256(t0[0], 0), 2);
-    ssb[7] = VEXTR64(VEXTR256(t0[1], 0), 2);
-    ssb[8] = VEXTR64(VEXTR256(t0[2], 0), 2);
-    ssb[9] = VEXTR64(VEXTR256(t0[0], 0), 3);
-    ssb[10] = VEXTR64(VEXTR256(t0[1], 0), 3);
-    ssb[11] = VEXTR64(VEXTR256(t0[2], 0), 3);
+    get_channel_2x4w(ssb, t0, 0);
 
     wrong = (memcmp(ssa, ssb, LL_NWORDS*sizeof(uint64_t)));
     if (wrong) {
