@@ -1,3 +1,9 @@
+This is an optimization of Cheng et. al.'s [CSIDH implementation](https://gitlab.uni.lu/APSIA/AVX-CSIDH).
+
+The low latency AVX-512IFMA implementations has been optimized by using a new Montgomery reduction algorithm to reduce data dependencies.
+
+More infomation could be found [here](https://arxiv.org/abs/2308.16432).
+
 # AVX-CSIDH
 
 AVX-CSIDH is a software library that includes the batched high-throughput and the unbatched low-latency AVX-512 implementations of CSIDH.
@@ -33,7 +39,7 @@ AVX-CSIDH is a software library that includes the batched high-throughput and th
 
 ## Usage
 
-### Compile the AVX-512IFMA implementation (need Intel Cannon Lake, Ice Lake or Tiger Lake machine!)
+### Compile the AVX-512IFMA implementation (need Intel Cannon Lake, Ice La  ke or Tiger Lake machine!)
 
 **The batched high-throughput (ht) implementation:** 
 ```bash

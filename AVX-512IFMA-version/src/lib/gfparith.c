@@ -7,7 +7,20 @@
  *******************************************************************************
  */
 
+//Modified by PENGCHANG REN
+
 #include "gfparith.h"
+const uint64_t r_i_mont[LL_NWORDS-2][LL_NWORDS * 2] = {
+{0x539bd275be,0x19305e79e7e,0x341c4de0891,0x6c26b614a93,0x539bd275be,0x19305e79e7e,0x341c4de0891,0x6c26b614a93,0x39211bc2877,0x6daacf50868,0x477b12e1e85,0x553d73305fc,0x39211bc2877,0x6daacf50868,0x477b12e1e85,0x553d73305fc,0x3ca42702733,0x25f3b10780a,0x759f7b05657,0xc78446d5,0x3ca42702733,0x25f3b10780a,0x759f7b05657,0xc78446d5},
+{0x3b6087ae2cf,0x4314a59bdf5,0x2a81cb10c32,0x5d0e19c1d02,0x3b6087ae2cf,0x4314a59bdf5,0x2a81cb10c32,0x5d0e19c1d02,0x6f2b6943c78,0x7b9422c31b2,0x3e7dae99622,0x28b3ff32f91,0x6f2b6943c78,0x7b9422c31b2,0x3e7dae99622,0x28b3ff32f91,0xa783c67ed0,0x3717fc39fa,0x799ad9eb81a,0xfa5f83be0,0xa783c67ed0,0x3717fc39fa,0x799ad9eb81a,0xfa5f83be0},
+{0x12f23349bf2,0x6624255d81b,0x1098ec38a91,0x4895cd2b49b,0x12f23349bf2,0x6624255d81b,0x1098ec38a91,0x4895cd2b49b,0x4dd620b668,0x4531eaf2492,0x5544ea17083,0x9223bea422,0x4dd620b668,0x4531eaf2492,0x5544ea17083,0x9223bea422,0x1385fa8b46f,0x33489d5b5fc,0x2669c924aa0,0x32a7a9463c,0x1385fa8b46f,0x33489d5b5fc,0x2669c924aa0,0x32a7a9463c},
+{0x607b7a0ae6a,0x2bfac54f197,0xb1442dfc2a,0x626874d3770,0x607b7a0ae6a,0x2bfac54f197,0xb1442dfc2a,0x626874d3770,0x47730306916,0x89b4a50759,0x51ed6f96132,0xac55cffa7a,0x47730306916,0x89b4a50759,0x51ed6f96132,0xac55cffa7a,0x6532908fc25,0x3c79eebbc90,0x2d96f7865fe,0x25629c21c2,0x6532908fc25,0x3c79eebbc90,0x2d96f7865fe,0x25629c21c2},
+{0x62d1ccf45ef,0x18dafb537f0,0x2f2d546dfa9,0x10face6542d,0x62d1ccf45ef,0x18dafb537f0,0x2f2d546dfa9,0x10face6542d,0x7fdd98b4397,0x7a7eec74055,0x23c1adeaa73,0x315164c8b6e,0x7fdd98b4397,0x7a7eec74055,0x23c1adeaa73,0x315164c8b6e,0x3367809495b,0x549985ef42c,0x3119c3fc9a,0x256d4345ff,0x3367809495b,0x549985ef42c,0x3119c3fc9a,0x256d4345ff},
+{0x699a0abee5,0x15616ff2f12,0x4ccc95356d5,0x7cf2968c23,0x699a0abee5,0x15616ff2f12,0x4ccc95356d5,0x7cf2968c23,0x1de19c65410,0x56de484ea98,0x6262f2de89d,0x5d8238d960f,0x1de19c65410,0x56de484ea98,0x6262f2de89d,0x5d8238d960f,0xce6af46165,0x3f19381910b,0x3f50a0d8fc8,0xf576f9220,0xce6af46165,0x3f19381910b,0x3f50a0d8fc8,0xf576f9220},
+{0x14131d165c1,0x7e8edbf81f8,0x7c1db88532a,0x778b924170d,0x14131d165c1,0x7e8edbf81f8,0x7c1db88532a,0x778b924170d,0x4e62a356efd,0x53e8325ccf0,0x25272fd98f8,0x2c0735da258,0x4e62a356efd,0x53e8325ccf0,0x25272fd98f8,0x2c0735da258,0x71de6dff0db,0x21842754db9,0x529a39969be,0x1f42636dc4,0x71de6dff0db,0x21842754db9,0x529a39969be,0x1f42636dc4},
+{0x2fe6b4d4e85,0x2c6755bc027,0x2c5d2f4577c,0x79972eb2b74,0x2fe6b4d4e85,0x2c6755bc027,0x2c5d2f4577c,0x79972eb2b74,0x2aeef447860,0x26c66ed012c,0x3f75fe99c6a,0x18f271aac49,0x2aeef447860,0x26c66ed012c,0x3f75fe99c6a,0x18f271aac49,0x653c15d4902,0x58dc95586ea,0x44e38e0c538,0xc4d500300,0x653c15d4902,0x58dc95586ea,0x44e38e0c538,0xc4d500300},
+{0x4e666325c08,0xd393f642f4,0x348009ad19f,0xaeb2b1ee05,0x4e666325c08,0xd393f642f4,0x348009ad19f,0xaeb2b1ee05,0x234aec69df0,0x6eb82d907b3,0x470d22b0ae2,0x55f259ad81d,0x234aec69df0,0x6eb82d907b3,0x470d22b0ae2,0x55f259ad81d,0x476f22001e2,0x14e3b9d52b3,0x6fa2d641ec8,0x203c1a1f40,0x476f22001e2,0x14e3b9d52b3,0x6fa2d641ec8,0x203c1a1f40},
+{0x59728c167f7,0x6bd8c38d281,0x3058ff98f4c,0x104211fc8c,0x59728c167f7,0x6bd8c38d281,0x3058ff98f4c,0x104211fc8c,0x2a1acfe63cb,0xd2acc90691,0xd69cd1a0,0x6d79661ad1,0x2a1acfe63cb,0xd2acc90691,0xd69cd1a0,0x6d79661ad1,0x479eec11d4e,0x741b7c4930f,0x754cb748cb2,0x14d1944e92,0x479eec11d4e,0x741b7c4930f,0x754cb748cb2,0x14d1944e92}};
 
 // (8x1)-way prime-field operations 
 
@@ -1194,351 +1207,282 @@ void gfp_subaddc_2x4w(llfe_t rs, const llfe_t ac, const llfe_t bd)
   rs[0] = rs0; rs[1] = rs1; rs[2] = rs2;
 }
 
+
+
+#define RADIX LL_BRADIX
+#define BROADCAST_LOWEST(A) _mm512_permutex_epi64(A, 0b00000000)
+// H<-VZERO; L<- (H <<(52 - 43)) +(L >> 43)
+#define NEXTLIMB(H, L) \
+tmp = _mm512_maskz_permutex_epi64(0x77, L##0, 0x39);\
+H##0 = _mm512_add_epi64(H##0, _mm512_srli_epi64(L##0, 52));\
+H##0 = _mm512_slli_epi64(H##0, 52 - RADIX);\
+L##0 = _mm512_add_epi64(H##0, L##1);\
+H##1 = _mm512_slli_epi64(H##1, 52 - RADIX);\
+L##1 = _mm512_add_epi64(H##1, L##2);\
+H##2 = _mm512_slli_epi64(H##2, 52 - RADIX);\
+L##2 = _mm512_add_epi64(H##2, _mm512_and_epi64(tmp, VSET1(((1LL<<52) - 1))));\
+H##0 = VZERO; H##1 = VZERO; H##2 = VZERO;
+
+#define CAT(A, B) A##B
+#define MADLO(DST, ADDER, MUL1, MUL2)   DST##0 = _mm512_madd52lo_epu64(ADDER##0, MUL1##0, MUL2);\
+                                        DST##1 = _mm512_madd52lo_epu64(ADDER##1, MUL1##1, MUL2);\
+                                        DST##2 = _mm512_madd52lo_epu64(ADDER##2, MUL1##2, MUL2);
+#define MADHI(DST, ADDER, MUL1, MUL2)   DST##0 = _mm512_madd52hi_epu64(ADDER##0, MUL1##0, MUL2);\
+                                        DST##1 = _mm512_madd52hi_epu64(ADDER##1, MUL1##1, MUL2);\
+                                        DST##2 = _mm512_madd52hi_epu64(ADDER##2, MUL1##2, MUL2);
+
+#define MUL(I)\
+MADLO(sl, sl, a, m##I); MADHI(sh, sh, a, m##I);\
+q = BROADCAST_LOWEST(sl0);\
+MADLO(msl, msl, r##I, q); MADHI(msh, msh, r##I, q);\
+NEXTLIMB(sh, sl);
+
 // Montgomery multiplication r = a * b mod 2p
 // multiplication (operand-scanning) interleaved with reduction (operand-scanning)
 // -> r in [0, 2p)
-void gfp_mul_2x4w(llfe_t r, const llfe_t a, const llfe_t b)
-{
-  const __m512i a0 = a[0], a1 = a[1], a2 = a[2];
-  const __m512i b0 = b[0], b1 = b[1], b2 = b[2];
-  __m512i z0  = VZERO, z1  = VZERO, z2  = VZERO, z3  = VZERO, z4  = VZERO;
-  __m512i z5  = VZERO, z6  = VZERO, z7  = VZERO, z8  = VZERO, z9  = VZERO;
-  __m512i z10 = VZERO, z11 = VZERO, z12 = VZERO, z13 = VZERO, z14 = VZERO;
-  __m512i h0  = VZERO, h1  = VZERO, h2  = VZERO, h3  = VZERO, h4  = VZERO;
-  __m512i h5  = VZERO, h6  = VZERO, h7  = VZERO, h8  = VZERO, h9  = VZERO;
-  __m512i h10 = VZERO, h11 = VZERO, h12 = VZERO, h13 = VZERO, h14 = VZERO;
-  __m512i r0, r1, r2, tb, c, u, zero = VZERO;
-  const __m512i p0 = VSET(ll_p[9],  ll_p[6], ll_p[3], ll_p[0], ll_p[9],  ll_p[6], ll_p[3], ll_p[0]);
-  const __m512i p1 = VSET(ll_p[10], ll_p[7], ll_p[4], ll_p[1], ll_p[10], ll_p[7], ll_p[4], ll_p[1]);
-  const __m512i p2 = VSET(ll_p[11], ll_p[8], ll_p[5], ll_p[2], ll_p[11], ll_p[8], ll_p[5], ll_p[2]);
-  const __m512i vbmask = VSET1(LL_BMASK), vw = VSET1(LL_MONTW);
 
-  // ---------------------------------------------------------------------------
-  // integer multiplication + Montgomery reduction
+void gfp_mul_2x4w(llfe_t c, const llfe_t a, const llfe_t b) {
+    __m512i a0=a[0], a1 = a[1], a2 = a[2];
+    __m512i b0=b[0], b1 = b[1], b2 = b[2];
+    //each limb of b
+    __m512i m0 = _mm512_permutex_epi64(b0, 0x00), m3 = _mm512_permutex_epi64(b0, 0x55), m6 = _mm512_permutex_epi64(b0, 0xAA), m9 = _mm512_permutex_epi64(b0, 0xFF);
+    __m512i m1 = _mm512_permutex_epi64(b1, 0x00), m4 = _mm512_permutex_epi64(b1, 0x55), m7 = _mm512_permutex_epi64(b1, 0xAA), m10= _mm512_permutex_epi64(b1, 0xFF);
+    __m512i m2 = _mm512_permutex_epi64(b2, 0x00), m5 = _mm512_permutex_epi64(b2, 0x55), m8 = _mm512_permutex_epi64(b2, 0xAA), m11= _mm512_permutex_epi64(b2, 0xFF);
+    //__m512i r%d0 = _mm512_load_epi64(r_i_mont[%d] + 0), r%d1 = _mm512_load_epi64(r_i_mont[%d] + 8),r%d2 = _mm512_load_epi64(r_i_mont[%d] + 16);
+    //Load constants
+    __m512i r00 = _mm512_load_epi64(r_i_mont[9] + 0), r01 = _mm512_load_epi64(r_i_mont[9] + 8),r02 = _mm512_load_epi64(r_i_mont[9] + 16);
+    __m512i r10 = _mm512_load_epi64(r_i_mont[8] + 0), r11 = _mm512_load_epi64(r_i_mont[8] + 8),r12 = _mm512_load_epi64(r_i_mont[8] + 16);
+    __m512i r20 = _mm512_load_epi64(r_i_mont[7] + 0), r21 = _mm512_load_epi64(r_i_mont[7] + 8),r22 = _mm512_load_epi64(r_i_mont[7] + 16);
+    __m512i r30 = _mm512_load_epi64(r_i_mont[6] + 0), r31 = _mm512_load_epi64(r_i_mont[6] + 8),r32 = _mm512_load_epi64(r_i_mont[6] + 16);
+    __m512i r40 = _mm512_load_epi64(r_i_mont[5] + 0), r41 = _mm512_load_epi64(r_i_mont[5] + 8),r42 = _mm512_load_epi64(r_i_mont[5] + 16);
+    __m512i r50 = _mm512_load_epi64(r_i_mont[4] + 0), r51 = _mm512_load_epi64(r_i_mont[4] + 8),r52 = _mm512_load_epi64(r_i_mont[4] + 16);
+    __m512i r60 = _mm512_load_epi64(r_i_mont[3] + 0), r61 = _mm512_load_epi64(r_i_mont[3] + 8),r62 = _mm512_load_epi64(r_i_mont[3] + 16);
+    __m512i r70 = _mm512_load_epi64(r_i_mont[2] + 0), r71 = _mm512_load_epi64(r_i_mont[2] + 8),r72 = _mm512_load_epi64(r_i_mont[2] + 16);
+    __m512i r80 = _mm512_load_epi64(r_i_mont[1] + 0), r81 = _mm512_load_epi64(r_i_mont[1] + 8),r82 = _mm512_load_epi64(r_i_mont[1] + 16);
+    __m512i r90 = _mm512_load_epi64(r_i_mont[0] + 0), r91 = _mm512_load_epi64(r_i_mont[0] + 8),r92 = _mm512_load_epi64(r_i_mont[0] + 16);
 
-  tb = VPERM(b0, 0x00);
-  z0 = VMACLO(z0, tb, a0); z1 = VMACLO(z1, tb, a1); z2 = VMACLO(z2, tb, a2); 
-  h0 = VMACHI(h0, tb, a0); h1 = VMACHI(h1, tb, a1); h2 = VMACHI(h2, tb, a2);
+    const __m512i p0 = VSET(ll_p[9],  ll_p[6], ll_p[3], ll_p[0], ll_p[9],  ll_p[6], ll_p[3], ll_p[0]);
+    const __m512i p1 = VSET(ll_p[10], ll_p[7], ll_p[4], ll_p[1], ll_p[10], ll_p[7], ll_p[4], ll_p[1]);
+    const __m512i p2 = VSET(ll_p[11], ll_p[8], ll_p[5], ll_p[2], ll_p[11], ll_p[8], ll_p[5], ll_p[2]);
+    
+    //sh: Sum, high half
+    //sl: Sum, low half
 
-  tb = VPERM(b1, 0x00); 
-  z1 = VMACLO(z1, tb, a0); z2 = VMACLO(z2, tb, a1); z3 = VMACLO(z3, tb, a2); 
-  h1 = VMACHI(h1, tb, a0); h2 = VMACHI(h2, tb, a1); h3 = VMACHI(h3, tb, a2);
+    
+    __m512i sh0 = VZERO, sl0 = VZERO, msh0 = VZERO, msl0 = VZERO;
+    __m512i sh1 = VZERO, sl1 = VZERO, msh1 = VZERO, msl1 = VZERO;
+    __m512i sh2 = VZERO, sl2 = VZERO, msh2 = VZERO, msl2 = VZERO;
+    __m512i q, tmp, vw = VSET1(LL_MONTW), vbmask = VSET1(LL_BMASK);
+    //0
+    MUL(0); MUL(1); MUL(2); MUL(3); MUL(4); MUL(5); MUL(6); MUL(7); MUL(8); MUL(9);
 
-  u = VAND(VMACLO(zero, vw, VPERM(z0, 0x00)), vbmask);
-  z0 = VMACLO(z0, u, p0); z1 = VMACLO(z1, u, p1); z2 = VMACLO(z2, u, p2);
-  h0 = VMACHI(h0, u, p0); h1 = VMACHI(h1, u, p1); h2 = VMACHI(h2, u, p2);
-  z3 = VMADD(z3, 0x77, z3, VPERM(z0, 0x39));
-  z1 = VMADD(z1, 0x11, z1, VSHR(z0, LL_BRADIX));
-  z1 = VADD(z1, VSHL(h0, 9));
+    sl0 = _mm512_add_epi64(sl0, msl0); sl1 = _mm512_add_epi64(sl1, msl1); sl2 = _mm512_add_epi64(sl2, msl2);
+    sh0 = msh0; sh1 = msh1; sh2 = msh2;
+    msh0 = VZERO, msl0 = VZERO;
+    msh1 = VZERO, msl1 = VZERO;
+    msh2 = VZERO, msl2 = VZERO;
+    MADLO(sl, sl, a, m10); MADHI(sh, sh, a, m10);
+    q = BROADCAST_LOWEST(sl0);
+    q = _mm512_madd52lo_epu64(VZERO, q, vw);
+    q = _mm512_and_epi64(q, vbmask);
+    MADLO(sl, sl, p, q); MADHI(sh, sh, p, q);
+    //shift
+    tmp = _mm512_maskz_permutex_epi64(0x77, sl0, 0x39);
+    sh0 = _mm512_slli_epi64(sh0, 52 - RADIX);
+    sh0 = _mm512_add_epi64(sh0, _mm512_srli_epi64(sl0, RADIX));
+    sl0 = _mm512_add_epi64(sh0, sl1);
+    sh1 = _mm512_slli_epi64(sh1, 52 - RADIX);
+    sl1 = _mm512_add_epi64(sh1, sl2);
+    sh2 = _mm512_slli_epi64(sh2, 52 - RADIX);
+    sl2 = _mm512_add_epi64(sh2, _mm512_and_epi64(tmp, vbmask));
+    sh0 = VZERO; sh1 = VZERO; sh2 = VZERO;  
+    MADLO(sl, sl, a, m11); MADHI(sh, sh, a, m11);
+    q = BROADCAST_LOWEST(sl0);
+    q = _mm512_madd52lo_epu64(VZERO, q, vw);
+    q = _mm512_and_epi64(q, vbmask);
+    MADLO(sl, sl, p, q); MADHI(sh, sh, p, q);
+    tmp = _mm512_maskz_permutex_epi64(0x77, sl0, 0x39);
+    sh0 = _mm512_slli_epi64(sh0, 52 - RADIX);
+    sh0 = _mm512_add_epi64(sh0, _mm512_srli_epi64(sl0, RADIX));
+    sl0 = _mm512_add_epi64(sh0, sl1);
+    sh1 = _mm512_slli_epi64(sh1, 52 - RADIX);
+    sl1 = _mm512_add_epi64(sh1, sl2);
+    sh2 = _mm512_slli_epi64(sh2, 52 - RADIX);
+    sl2 = _mm512_add_epi64(sh2, _mm512_and_epi64(tmp, vbmask));
 
-  tb = VPERM(b2, 0x00); 
-  z2 = VMACLO(z2, tb, a0); z3 = VMACLO(z3, tb, a1); z4 = VMACLO(z4, tb, a2); 
-  h2 = VMACHI(h2, tb, a0); h3 = VMACHI(h3, tb, a1); h4 = VMACHI(h4, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z1, 0x00)), vbmask);
-  z1 = VMACLO(z1, u, p0); z2 = VMACLO(z2, u, p1); z3 = VMACLO(z3, u, p2);
-  h1 = VMACHI(h1, u, p0); h2 = VMACHI(h2, u, p1); h3 = VMACHI(h3, u, p2);
-  z4 = VMADD(z4, 0x77, z4, VPERM(z1, 0x39));
-  z2 = VMADD(z2, 0x11, z2, VSHR(z1, LL_BRADIX));
-  z2 = VADD(z2, VSHL(h1, 9));
-
-  tb = VPERM(b0, 0x55); 
-  z3 = VMACLO(z3, tb, a0); z4 = VMACLO(z4, tb, a1); z5 = VMACLO(z5, tb, a2);
-  h3 = VMACHI(h3, tb, a0); h4 = VMACHI(h4, tb, a1); h5 = VMACHI(h5, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z2, 0x00)), vbmask);
-  z2 = VMACLO(z2, u, p0); z3 = VMACLO(z3, u, p1); z4 = VMACLO(z4, u, p2);
-  h2 = VMACHI(h2, u, p0); h3 = VMACHI(h3, u, p1); h4 = VMACHI(h4, u, p2);
-  z5 = VMADD(z5, 0x77, z5, VPERM(z2, 0x39));
-  z3 = VMADD(z3, 0x11, z3, VSHR(z2, LL_BRADIX));
-  z3 = VADD(z3, VSHL(h2, 9));
-
-  tb = VPERM(b1, 0x55); 
-  z4 = VMACLO(z4, tb, a0); z5 = VMACLO(z5, tb, a1); z6 = VMACLO(z6, tb, a2);
-  h4 = VMACHI(h4, tb, a0); h5 = VMACHI(h5, tb, a1); h6 = VMACHI(h6, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z3, 0x00)), vbmask);
-  z3 = VMACLO(z3, u, p0); z4 = VMACLO(z4, u, p1); z5 = VMACLO(z5, u, p2);
-  h3 = VMACHI(h3, u, p0); h4 = VMACHI(h4, u, p1); h5 = VMACHI(h5, u, p2);
-  z6 = VMADD(z6, 0x77, z6, VPERM(z3, 0x39));
-  z4 = VMADD(z4, 0x11, z4, VSHR(z3, LL_BRADIX));
-  z4 = VADD(z4, VSHL(h3, 9));
-
-  tb = VPERM(b2, 0x55); 
-  z5 = VMACLO(z5, tb, a0); z6 = VMACLO(z6, tb, a1); z7 = VMACLO(z7, tb, a2);
-  h5 = VMACHI(h5, tb, a0); h6 = VMACHI(h6, tb, a1); h7 = VMACHI(h7, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z4, 0x00)), vbmask);
-  z4 = VMACLO(z4, u, p0); z5 = VMACLO(z5, u, p1); z6 = VMACLO(z6, u, p2);
-  h4 = VMACHI(h4, u, p0); h5 = VMACHI(h5, u, p1); h6 = VMACHI(h6, u, p2);
-  z7 = VMADD(z7, 0x77, z7, VPERM(z4, 0x39));
-  z5 = VMADD(z5, 0x11, z5, VSHR(z4, LL_BRADIX));
-  z5 = VADD(z5, VSHL(h4, 9));
-
-  tb = VPERM(b0, 0xAA);
-  z6 = VMACLO(z6, tb, a0); z7 = VMACLO(z7, tb, a1); z8 = VMACLO(z8, tb, a2);
-  h6 = VMACHI(h6, tb, a0); h7 = VMACHI(h7, tb, a1); h8 = VMACHI(h8, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z5, 0x00)), vbmask);
-  z5 = VMACLO(z5, u, p0); z6 = VMACLO(z6, u, p1); z7 = VMACLO(z7, u, p2);
-  h5 = VMACHI(h5, u, p0); h6 = VMACHI(h6, u, p1); h7 = VMACHI(h7, u, p2);
-  z8 = VMADD(z8, 0x77, z8, VPERM(z5, 0x39));
-  z6 = VMADD(z6, 0x11, z6, VSHR(z5, LL_BRADIX));
-  z6 = VADD(z6, VSHL(h5, 9));
-
-  tb = VPERM(b1, 0xAA);
-  z7 = VMACLO(z7, tb, a0); z8 = VMACLO(z8, tb, a1); z9 = VMACLO(z9, tb, a2);
-  h7 = VMACHI(h7, tb, a0); h8 = VMACHI(h8, tb, a1); h9 = VMACHI(h9, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z6, 0x00)), vbmask);
-  z6 = VMACLO(z6, u, p0); z7 = VMACLO(z7, u, p1); z8 = VMACLO(z8, u, p2);
-  h6 = VMACHI(h6, u, p0); h7 = VMACHI(h7, u, p1); h8 = VMACHI(h8, u, p2);
-  z9 = VMADD(z9, 0x77, z9, VPERM(z6, 0x39));
-  z7 = VMADD(z7, 0x11, z7, VSHR(z6, LL_BRADIX));
-  z7 = VADD(z7, VSHL(h6, 9));
-
-  tb = VPERM(b2, 0xAA);
-  z8 = VMACLO(z8, tb, a0); z9 = VMACLO(z9, tb, a1); z10 = VMACLO(z10, tb, a2);
-  h8 = VMACHI(h8, tb, a0); h9 = VMACHI(h9, tb, a1); h10 = VMACHI(h10, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z7, 0x00)), vbmask);
-  z7 = VMACLO(z7, u, p0); z8 = VMACLO(z8, u, p1); z9 = VMACLO(z9, u, p2);
-  h7 = VMACHI(h7, u, p0); h8 = VMACHI(h8, u, p1); h9 = VMACHI(h9, u, p2);
-  z10 = VMADD(z10, 0x77, z10, VPERM(z7, 0x39));
-  z8 = VMADD(z8, 0x11, z8, VSHR(z7, LL_BRADIX));
-  z8 = VADD(z8, VSHL(h7, 9));
-
-  tb  = VPERM(b0, 0xFF); 
-  z9  = VMACLO(z9, tb, a0); z10 = VMACLO(z10, tb, a1); z11 = VMACLO(z11, tb, a2);
-  h9  = VMACHI(h9, tb, a0); h10 = VMACHI(h10, tb, a1); h11 = VMACHI(h11, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z8, 0x00)), vbmask);
-  z8 = VMACLO(z8, u, p0); z9 = VMACLO(z9, u, p1); z10 = VMACLO(z10, u, p2);
-  h8 = VMACHI(h8, u, p0); h9 = VMACHI(h9, u, p1); h10 = VMACHI(h10, u, p2);
-  z11 = VMADD(z11, 0x77, z11, VPERM(z8, 0x39));
-  z9 = VMADD(z9, 0x11, z9, VSHR(z8, LL_BRADIX));
-  z9 = VADD(z9, VSHL(h8, 9));
-
-  tb  = VPERM(b1, 0xFF); 
-  z10 = VMACLO(z10, tb, a0); z11 = VMACLO(z11, tb, a1); z12 = VMACLO(z12, tb, a2);
-  h10 = VMACHI(h10, tb, a0); h11 = VMACHI(h11, tb, a1); h12 = VMACHI(h12, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z9, 0x00)), vbmask);
-  z9 = VMACLO(z9, u, p0); z10 = VMACLO(z10, u, p1); z11 = VMACLO(z11, u, p2);
-  h9 = VMACHI(h9, u, p0); h10 = VMACHI(h10, u, p1); h11 = VMACHI(h11, u, p2);
-  z12 = VMADD(z12, 0x77, z12, VPERM(z9, 0x39));
-  z10 = VMADD(z10, 0x11, z10, VSHR(z9, LL_BRADIX));
-  z10 = VADD(z10, VSHL(h9, 9));
-
-  tb  = VPERM(b2, 0xFF); 
-  z11 = VMACLO(z11, tb, a0); z12 = VMACLO(z12, tb, a1); z13 = VMACLO(z13, tb, a2);
-  h11 = VMACHI(h11, tb, a0); h12 = VMACHI(h12, tb, a1); h13 = VMACHI(h13, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z10, 0x00)), vbmask);
-  z10 = VMACLO(z10, u, p0); z11 = VMACLO(z11, u, p1); z12 = VMACLO(z12, u, p2);
-  h10 = VMACHI(h10, u, p0); h11 = VMACHI(h11, u, p1); h12 = VMACHI(h12, u, p2);
-  z13 = VMADD(z13, 0x77, z13, VPERM(z10, 0x39));
-  z11 = VMADD(z11, 0x11, z11, VSHR(z10, LL_BRADIX));
-  z11 = VADD(z11, VSHL(h10, 9));
-
-  u = VAND(VMACLO(zero, vw, VPERM(z11, 0x00)), vbmask);
-  z11 = VMACLO(z11, u, p0); z12 = VMACLO(z12, u, p1); z13 = VMACLO(z13, u, p2);
-  h11 = VMACHI(h11, u, p0); h12 = VMACHI(h12, u, p1); h13 = VMACHI(h13, u, p2);
-  z14 = VMADD(z14, 0x77, z14, VPERM(z11, 0x39));
-  z12 = VMADD(z12, 0x11, z12, VSHR(z11, LL_BRADIX));
-  z12 = VADD(z12, VSHL(h11, 9));
-  z13 = VADD(z13, VSHL(h12, 9));
-  z14 = VADD(z14, VSHL(h13, 9));
-
-  // ---------------------------------------------------------------------------
-  // *simple* carry propagation (some limbs are finally 44-bit not 43-bit)
-
-  r0 = z12; r1 = z13; r2 = z14;
-
-  c = VSHR(r0, LL_BRADIX); r0 = VAND(r0, vbmask); r1 = VADD(r1, c);
-  c = VSHR(r1, LL_BRADIX); r1 = VAND(r1, vbmask); r2 = VADD(r2, c);
-  c = VSHR(r2, LL_BRADIX); r2 = VAND(r2, vbmask);
-  r0 = VMADD(r0, 0xEE, r0, VPERM(c, 0x93));
-
-  r[0] = r0; r[1] = r1; r[2] = r2; 
+    sh2 = _mm512_srli_epi64(sl1, RADIX);
+    sh1 = _mm512_srli_epi64(sl0, RADIX);
+    sh0 = _mm512_maskz_permutex_epi64(0xEE, sl2, 0x93);
+    sh0 = _mm512_srli_epi64(sh0, RADIX);
+    sl2 = _mm512_and_epi64(sl2, vbmask);
+    sl1 = _mm512_and_epi64(sl1, vbmask);
+    sl0 = _mm512_and_epi64(sl0, vbmask);
+    sl2 = _mm512_add_epi64(sl2, sh2);
+    sl1 = _mm512_add_epi64(sl1, sh1);
+    sl0 = _mm512_add_epi64(sl0, sh0);
+    c[0] = sl0; c[1] = sl1; c[2] = sl2;
 }
-
+#define RED(I)\
+q = BROADCAST_LOWEST(sl0);\
+MADLO(msl, msl, r##I, q); MADHI(msh, msh, r##I, q);\
+NEXTLIMB(sh, sl);
 // Montgomery squaring r = a^2 mod 2p
 // squaring (operand-scanning) interleaved with reduction (operand-scanning)
 // -> r in [0, 2p)
-void gfp_sqr_2x4w(llfe_t r, const llfe_t a)
-{
-  const __m512i a0 = a[0], a1 = a[1], a2 = a[2];
-  __m512i z0  = VZERO, z1  = VZERO, z2  = VZERO, z3  = VZERO, z4  = VZERO;
-  __m512i z5  = VZERO, z6  = VZERO, z7  = VZERO, z8  = VZERO, z9  = VZERO;
-  __m512i z10 = VZERO, z11 = VZERO, z12 = VZERO, z13 = VZERO, z14 = VZERO;
-  __m512i h0  = VZERO, h1  = VZERO, h2  = VZERO, h3  = VZERO, h4  = VZERO;
-  __m512i h5  = VZERO, h6  = VZERO, h7  = VZERO, h8  = VZERO, h9  = VZERO;
-  __m512i h10 = VZERO, h11 = VZERO, h12 = VZERO, h13 = VZERO, h14 = VZERO;
-  __m512i r0, r1, r2, tb, db, c, u, zero = VZERO;
-  const __m512i p0 = VSET(ll_p[9],  ll_p[6], ll_p[3], ll_p[0], ll_p[9],  ll_p[6], ll_p[3], ll_p[0]);
-  const __m512i p1 = VSET(ll_p[10], ll_p[7], ll_p[4], ll_p[1], ll_p[10], ll_p[7], ll_p[4], ll_p[1]);
-  const __m512i p2 = VSET(ll_p[11], ll_p[8], ll_p[5], ll_p[2], ll_p[11], ll_p[8], ll_p[5], ll_p[2]);
-  const __m512i vbmask = VSET1(LL_BMASK), vw = VSET1(LL_MONTW);
+void gfp_sqr_2x4w(llfe_t c, const llfe_t b) {
+    __m512i b0=b[0], b1 = b[1], b2 = b[2];
+    __m512i b1_2 = _mm512_add_epi64(b1, b1);
+    __m512i b2_2 = _mm512_add_epi64(b2, b2);
+    //each limb of b
+    __m512i m0 = _mm512_permutex_epi64(b0, 0x00), m3 = _mm512_permutex_epi64(b0, 0x55), m6 = _mm512_permutex_epi64(b0, 0xAA), m9 = _mm512_permutex_epi64(b0, 0xFF);
+    __m512i m1 = _mm512_permutex_epi64(b1, 0x00), m4 = _mm512_permutex_epi64(b1, 0x55), m7 = _mm512_permutex_epi64(b1, 0xAA), m10= _mm512_permutex_epi64(b1, 0xFF);
+    __m512i m2 = _mm512_permutex_epi64(b2, 0x00), m5 = _mm512_permutex_epi64(b2, 0x55), m8 = _mm512_permutex_epi64(b2, 0xAA), m11= _mm512_permutex_epi64(b2, 0xFF);
+    //__m512i r%d0 = _mm512_load_epi64(r_i_mont[%d] + 0), r%d1 = _mm512_load_epi64(r_i_mont[%d] + 8),r%d2 = _mm512_load_epi64(r_i_mont[%d] + 16);
+    //Load constants
+    __m512i r00 = _mm512_load_epi64(r_i_mont[9] + 0), r01 = _mm512_load_epi64(r_i_mont[9] + 8),r02 = _mm512_load_epi64(r_i_mont[9] + 16);
+    __m512i r10 = _mm512_load_epi64(r_i_mont[8] + 0), r11 = _mm512_load_epi64(r_i_mont[8] + 8),r12 = _mm512_load_epi64(r_i_mont[8] + 16);
+    __m512i r20 = _mm512_load_epi64(r_i_mont[7] + 0), r21 = _mm512_load_epi64(r_i_mont[7] + 8),r22 = _mm512_load_epi64(r_i_mont[7] + 16);
+    __m512i r30 = _mm512_load_epi64(r_i_mont[6] + 0), r31 = _mm512_load_epi64(r_i_mont[6] + 8),r32 = _mm512_load_epi64(r_i_mont[6] + 16);
+    __m512i r40 = _mm512_load_epi64(r_i_mont[5] + 0), r41 = _mm512_load_epi64(r_i_mont[5] + 8),r42 = _mm512_load_epi64(r_i_mont[5] + 16);
+    __m512i r50 = _mm512_load_epi64(r_i_mont[4] + 0), r51 = _mm512_load_epi64(r_i_mont[4] + 8),r52 = _mm512_load_epi64(r_i_mont[4] + 16);
+    __m512i r60 = _mm512_load_epi64(r_i_mont[3] + 0), r61 = _mm512_load_epi64(r_i_mont[3] + 8),r62 = _mm512_load_epi64(r_i_mont[3] + 16);
+    __m512i r70 = _mm512_load_epi64(r_i_mont[2] + 0), r71 = _mm512_load_epi64(r_i_mont[2] + 8),r72 = _mm512_load_epi64(r_i_mont[2] + 16);
+    __m512i r80 = _mm512_load_epi64(r_i_mont[1] + 0), r81 = _mm512_load_epi64(r_i_mont[1] + 8),r82 = _mm512_load_epi64(r_i_mont[1] + 16);
+    __m512i r90 = _mm512_load_epi64(r_i_mont[0] + 0), r91 = _mm512_load_epi64(r_i_mont[0] + 8),r92 = _mm512_load_epi64(r_i_mont[0] + 16);
 
-  // ---------------------------------------------------------------------------
-  // integer squaring + Montgomery reduction
+    const __m512i p0 = VSET(ll_p[9],  ll_p[6], ll_p[3], ll_p[0], ll_p[9],  ll_p[6], ll_p[3], ll_p[0]);
+    const __m512i p1 = VSET(ll_p[10], ll_p[7], ll_p[4], ll_p[1], ll_p[10], ll_p[7], ll_p[4], ll_p[1]);
+    const __m512i p2 = VSET(ll_p[11], ll_p[8], ll_p[5], ll_p[2], ll_p[11], ll_p[8], ll_p[5], ll_p[2]);
+    
+    //sh: Sum, high half
+    //sl: Sum, low half
 
-  tb = VPERM(a0, 0x00);
-  db = VADD(tb, tb);
-  z0 = VMACLO(z0, tb, a0); z1 = VMACLO(z1, db, a1); z2 = VMACLO(z2, db, a2); 
-  h0 = VMACHI(h0, tb, a0); h1 = VMACHI(h1, db, a1); h2 = VMACHI(h2, db, a2);
+    __m512i sh0 = VZERO, sl0 = VZERO, msh0 = VZERO, msl0 = VZERO;
+    __m512i sh1 = VZERO, sl1 = VZERO, msh1 = VZERO, msl1 = VZERO;
+    __m512i sh2 = VZERO, sl2 = VZERO, msh2 = VZERO, msl2 = VZERO;
+    __m512i q, tmp, vw = VSET1(LL_MONTW), vbmask = VSET1(LL_BMASK);
+    //0
+    
+    //MUL(0);
+    sl0 = _mm512_madd52lo_epu64(sl0, b0, m0);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1_2, m0);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m0);
+    sh0 = _mm512_madd52hi_epu64(sh0, b0, m0);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1_2, m0);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m0);
+    RED(0);
+    
+    // MUL(1); 
+    sl1 = _mm512_madd52lo_epu64(sl1, b1, m1);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m1);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1, m1);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m1);
+    RED(1);
+    //MUL(2)
+    sl2 = _mm512_madd52lo_epu64(sl2, b2, m2);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2, m2);
+    RED(2);
+    //MUL(3);
+    sl0 = _mm512_madd52lo_epu64(sl0, b0, m3);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1_2, m3);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m3);
+    sh0 = _mm512_madd52hi_epu64(sh0, b0, m3);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1_2, m3);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m3);
+    RED(3);
+    //MUL(4);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1, m4);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m4);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1, m4);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m4);
+    RED(4);
+    //MUL(5);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2, m5);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2, m5);
+    RED(5);
+    //MUL(6);
+    sl0 = _mm512_madd52lo_epu64(sl0, b0, m6);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1_2, m6);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m6);
+    sh0 = _mm512_madd52hi_epu64(sh0, b0, m6);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1_2, m6);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m6);
+    RED(6);
+    //MUL(7);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1, m7);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m7);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1, m7);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m7);
+    RED(7);
+    //MUL(8);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2, m8);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2, m8);
+    RED(8);
+    //MUL(9);
+    sl0 = _mm512_madd52lo_epu64(sl0, b0, m9);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1_2, m9);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m9);
+    sh0 = _mm512_madd52hi_epu64(sh0, b0, m9);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1_2, m9);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m9);
+    RED(9);
 
-  tb = VPERM(a1, 0x00);
-  db = VADD(tb, tb);
-  z2 = VMACLO(z2, tb, a1); z3 = VMACLO(z3, db, a2); 
-  h2 = VMACHI(h2, tb, a1); h3 = VMACHI(h3, db, a2);
+    sl0 = _mm512_add_epi64(sl0, msl0); sl1 = _mm512_add_epi64(sl1, msl1); sl2 = _mm512_add_epi64(sl2, msl2);
+    sh0 = msh0; sh1 = msh1; sh2 = msh2;
+    msh0 = VZERO, msl0 = VZERO;
+    msh1 = VZERO, msl1 = VZERO;
+    msh2 = VZERO, msl2 = VZERO;
+    //MADLO(sl, sl, a, m10); MADHI(sh, sh, a, m10);
+    sl1 = _mm512_madd52lo_epu64(sl1, b1, m10);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2_2, m10);
+    sh1 = _mm512_madd52hi_epu64(sh1, b1, m10);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2_2, m10);
+    //RED(10)
+    q = BROADCAST_LOWEST(sl0);
+    q = _mm512_madd52lo_epu64(VZERO, q, vw);
+    q = _mm512_and_epi64(q, vbmask);
+    MADLO(sl, sl, p, q); MADHI(sh, sh, p, q);
+    //shift
+    tmp = _mm512_maskz_permutex_epi64(0x77, sl0, 0x39);
+    sh0 = _mm512_slli_epi64(sh0, 52 - RADIX);
+    sh0 = _mm512_add_epi64(sh0, _mm512_srli_epi64(sl0, RADIX));
+    sl0 = _mm512_add_epi64(sh0, sl1);
+    sh1 = _mm512_slli_epi64(sh1, 52 - RADIX);
+    sl1 = _mm512_add_epi64(sh1, sl2);
+    sh2 = _mm512_slli_epi64(sh2, 52 - RADIX);
+    sl2 = _mm512_add_epi64(sh2, _mm512_and_epi64(tmp, vbmask));
+    sh0 = VZERO; sh1 = VZERO; sh2 = VZERO;  
+    //MADLO(sl, sl, a, m11); MADHI(sh, sh, a, m11);
+    sl2 = _mm512_madd52lo_epu64(sl2, b2, m11);
+    sh2 = _mm512_madd52hi_epu64(sh2, b2, m11);
+    //RED(11);
+    q = BROADCAST_LOWEST(sl0);
+    q = _mm512_madd52lo_epu64(VZERO, q, vw);
+    q = _mm512_and_epi64(q, vbmask);
+    MADLO(sl, sl, p, q); MADHI(sh, sh, p, q);
+    tmp = _mm512_maskz_permutex_epi64(0x77, sl0, 0x39);
+    sh0 = _mm512_slli_epi64(sh0, 52 - RADIX);
+    sh0 = _mm512_add_epi64(sh0, _mm512_srli_epi64(sl0, RADIX));
+    sl0 = _mm512_add_epi64(sh0, sl1);
+    sh1 = _mm512_slli_epi64(sh1, 52 - RADIX);
+    sl1 = _mm512_add_epi64(sh1, sl2);
+    sh2 = _mm512_slli_epi64(sh2, 52 - RADIX);
+    sl2 = _mm512_add_epi64(sh2, _mm512_and_epi64(tmp, vbmask));
 
-  u = VAND(VMACLO(zero, vw, VPERM(z0, 0x00)), vbmask);
-  z0 = VMACLO(z0, u, p0); z1 = VMACLO(z1, u, p1); z2 = VMACLO(z2, u, p2);
-  h0 = VMACHI(h0, u, p0); h1 = VMACHI(h1, u, p1); h2 = VMACHI(h2, u, p2);
-  z3 = VMADD(z3, 0x77, z3, VPERM(z0, 0x39));
-  z1 = VMADD(z1, 0x11, z1, VSHR(z0, LL_BRADIX));
-  z1 = VADD(z1, VSHL(h0, 9));
+    sh2 = _mm512_srli_epi64(sl1, RADIX);
+    sh1 = _mm512_srli_epi64(sl0, RADIX);
+    sh0 = _mm512_maskz_permutex_epi64(0xEE, sl2, 0x93);
+    sh0 = _mm512_srli_epi64(sh0, RADIX);
+    sl2 = _mm512_and_epi64(sl2, vbmask);
+    sl1 = _mm512_and_epi64(sl1, vbmask);
+    sl0 = _mm512_and_epi64(sl0, vbmask);
+    sl2 = _mm512_add_epi64(sl2, sh2);
+    sl1 = _mm512_add_epi64(sl1, sh1);
+    sl0 = _mm512_add_epi64(sl0, sh0);
+    
+    c[0] = sl0; c[1] = sl1; c[2] = sl2;
 
-  tb = VPERM(a2, 0x00);
-  z4 = VMACLO(z4, tb, a2); 
-  h4 = VMACHI(h4, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z1, 0x00)), vbmask);
-  z1 = VMACLO(z1, u, p0); z2 = VMACLO(z2, u, p1); z3 = VMACLO(z3, u, p2);
-  h1 = VMACHI(h1, u, p0); h2 = VMACHI(h2, u, p1); h3 = VMACHI(h3, u, p2);
-  z4 = VMADD(z4, 0x77, z4, VPERM(z1, 0x39));
-  z2 = VMADD(z2, 0x11, z2, VSHR(z1, LL_BRADIX));
-  z2 = VADD(z2, VSHL(h1, 9));
-
-  tb = VPERM(a0, 0x55);
-  db = VADD(tb, tb);
-  z3 = VMACLO(z3, tb, a0); z4 = VMACLO(z4, db, a1); z5 = VMACLO(z5, db, a2);
-  h3 = VMACHI(h3, tb, a0); h4 = VMACHI(h4, db, a1); h5 = VMACHI(h5, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z2, 0x00)), vbmask);
-  z2 = VMACLO(z2, u, p0); z3 = VMACLO(z3, u, p1); z4 = VMACLO(z4, u, p2);
-  h2 = VMACHI(h2, u, p0); h3 = VMACHI(h3, u, p1); h4 = VMACHI(h4, u, p2);
-  z5 = VMADD(z5, 0x77, z5, VPERM(z2, 0x39));
-  z3 = VMADD(z3, 0x11, z3, VSHR(z2, LL_BRADIX));
-  z3 = VADD(z3, VSHL(h2, 9));
-
-  tb = VPERM(a1, 0x55); 
-  db = VADD(tb, tb);
-  z5 = VMACLO(z5, tb, a1); z6 = VMACLO(z6, db, a2);
-  h5 = VMACHI(h5, tb, a1); h6 = VMACHI(h6, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z3, 0x00)), vbmask);
-  z3 = VMACLO(z3, u, p0); z4 = VMACLO(z4, u, p1); z5 = VMACLO(z5, u, p2);
-  h3 = VMACHI(h3, u, p0); h4 = VMACHI(h4, u, p1); h5 = VMACHI(h5, u, p2);
-  z6 = VMADD(z6, 0x77, z6, VPERM(z3, 0x39));
-  z4 = VMADD(z4, 0x11, z4, VSHR(z3, LL_BRADIX));
-  z4 = VADD(z4, VSHL(h3, 9));
-
-  tb = VPERM(a2, 0x55);
-  z7 = VMACLO(z7, tb, a2);
-  h7 = VMACHI(h7, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z4, 0x00)), vbmask);
-  z4 = VMACLO(z4, u, p0); z5 = VMACLO(z5, u, p1); z6 = VMACLO(z6, u, p2);
-  h4 = VMACHI(h4, u, p0); h5 = VMACHI(h5, u, p1); h6 = VMACHI(h6, u, p2);
-  z7 = VMADD(z7, 0x77, z7, VPERM(z4, 0x39));
-  z5 = VMADD(z5, 0x11, z5, VSHR(z4, LL_BRADIX));
-  z5 = VADD(z5, VSHL(h4, 9));
-
-  tb = VPERM(a0, 0xAA);
-  db = VADD(tb, tb);
-  z6 = VMACLO(z6, tb, a0); z7 = VMACLO(z7, db, a1); z8 = VMACLO(z8, db, a2);
-  h6 = VMACHI(h6, tb, a0); h7 = VMACHI(h7, db, a1); h8 = VMACHI(h8, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z5, 0x00)), vbmask);
-  z5 = VMACLO(z5, u, p0); z6 = VMACLO(z6, u, p1); z7 = VMACLO(z7, u, p2);
-  h5 = VMACHI(h5, u, p0); h6 = VMACHI(h6, u, p1); h7 = VMACHI(h7, u, p2);
-  z8 = VMADD(z8, 0x77, z8, VPERM(z5, 0x39));
-  z6 = VMADD(z6, 0x11, z6, VSHR(z5, LL_BRADIX));
-  z6 = VADD(z6, VSHL(h5, 9));
-
-  tb = VPERM(a1, 0xAA);
-  db = VADD(tb, tb);
-  z8 = VMACLO(z8, tb, a1); z9 = VMACLO(z9, db, a2);
-  h8 = VMACHI(h8, tb, a1); h9 = VMACHI(h9, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z6, 0x00)), vbmask);
-  z6 = VMACLO(z6, u, p0); z7 = VMACLO(z7, u, p1); z8 = VMACLO(z8, u, p2);
-  h6 = VMACHI(h6, u, p0); h7 = VMACHI(h7, u, p1); h8 = VMACHI(h8, u, p2);
-  z9 = VMADD(z9, 0x77, z9, VPERM(z6, 0x39));
-  z7 = VMADD(z7, 0x11, z7, VSHR(z6, LL_BRADIX));
-  z7 = VADD(z7, VSHL(h6, 9));
-
-  tb = VPERM(a2, 0xAA);
-  z10 = VMACLO(z10, tb, a2);
-  h10 = VMACHI(h10, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z7, 0x00)), vbmask);
-  z7 = VMACLO(z7, u, p0); z8 = VMACLO(z8, u, p1); z9 = VMACLO(z9, u, p2);
-  h7 = VMACHI(h7, u, p0); h8 = VMACHI(h8, u, p1); h9 = VMACHI(h9, u, p2);
-  z10 = VMADD(z10, 0x77, z10, VPERM(z7, 0x39));
-  z8 = VMADD(z8, 0x11, z8, VSHR(z7, LL_BRADIX));
-  z8 = VADD(z8, VSHL(h7, 9));
-
-  tb  = VPERM(a0, 0xFF); 
-  db = VADD(tb, tb);
-  z9  = VMACLO(z9, tb, a0); z10 = VMACLO(z10, db, a1); z11 = VMACLO(z11, db, a2);
-  h9  = VMACHI(h9, tb, a0); h10 = VMACHI(h10, db, a1); h11 = VMACHI(h11, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z8, 0x00)), vbmask);
-  z8 = VMACLO(z8, u, p0); z9 = VMACLO(z9, u, p1); z10 = VMACLO(z10, u, p2);
-  h8 = VMACHI(h8, u, p0); h9 = VMACHI(h9, u, p1); h10 = VMACHI(h10, u, p2);
-  z11 = VMADD(z11, 0x77, z11, VPERM(z8, 0x39));
-  z9 = VMADD(z9, 0x11, z9, VSHR(z8, LL_BRADIX));
-  z9 = VADD(z9, VSHL(h8, 9));
-
-  tb  = VPERM(a1, 0xFF); 
-  db = VADD(tb, tb);
-  z11 = VMACLO(z11, tb, a1); z12 = VMACLO(z12, db, a2);
-  h11 = VMACHI(h11, tb, a1); h12 = VMACHI(h12, db, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z9, 0x00)), vbmask);
-  z9 = VMACLO(z9, u, p0); z10 = VMACLO(z10, u, p1); z11 = VMACLO(z11, u, p2);
-  h9 = VMACHI(h9, u, p0); h10 = VMACHI(h10, u, p1); h11 = VMACHI(h11, u, p2);
-  z12 = VMADD(z12, 0x77, z12, VPERM(z9, 0x39));
-  z10 = VMADD(z10, 0x11, z10, VSHR(z9, LL_BRADIX));
-  z10 = VADD(z10, VSHL(h9, 9));
-
-  tb  = VPERM(a2, 0xFF); 
-  z13 = VMACLO(z13, tb, a2);
-  h13 = VMACHI(h13, tb, a2);
-
-  u = VAND(VMACLO(zero, vw, VPERM(z10, 0x00)), vbmask);
-  z10 = VMACLO(z10, u, p0); z11 = VMACLO(z11, u, p1); z12 = VMACLO(z12, u, p2);
-  h10 = VMACHI(h10, u, p0); h11 = VMACHI(h11, u, p1); h12 = VMACHI(h12, u, p2);
-  z13 = VMADD(z13, 0x77, z13, VPERM(z10, 0x39));
-  z11 = VMADD(z11, 0x11, z11, VSHR(z10, LL_BRADIX));
-  z11 = VADD(z11, VSHL(h10, 9));
-
-  u = VAND(VMACLO(zero, vw, VPERM(z11, 0x00)), vbmask);
-  z11 = VMACLO(z11, u, p0); z12 = VMACLO(z12, u, p1); z13 = VMACLO(z13, u, p2);
-  h11 = VMACHI(h11, u, p0); h12 = VMACHI(h12, u, p1); h13 = VMACHI(h13, u, p2);
-  z14 = VMADD(z14, 0x77, z14, VPERM(z11, 0x39));
-  z12 = VMADD(z12, 0x11, z12, VSHR(z11, LL_BRADIX));
-  z12 = VADD(z12, VSHL(h11, 9));
-  z13 = VADD(z13, VSHL(h12, 9));
-  z14 = VADD(z14, VSHL(h13, 9));
-
-  // ---------------------------------------------------------------------------
-  // *simple* carry propagation (some limbs are finally 44-bit not 43-bit)
-
-  r0 = z12; r1 = z13; r2 = z14;
-
-  c = VSHR(r0, LL_BRADIX); r0 = VAND(r0, vbmask); r1 = VADD(r1, c);
-  c = VSHR(r1, LL_BRADIX); r1 = VAND(r1, vbmask); r2 = VADD(r2, c);
-  c = VSHR(r2, LL_BRADIX); r2 = VAND(r2, vbmask);
-  r0 = VMADD(r0, 0xEE, r0, VPERM(c, 0x93));
-
-  r[0] = r0; r[1] = r1; r[2] = r2; 
 }
-
 // field exponentiation r = a^e mod 2p
 // the exponent e is a *public* parameter
 // -> r in [0, 2p)

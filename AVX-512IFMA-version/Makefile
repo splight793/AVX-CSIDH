@@ -1,5 +1,7 @@
 # compiler
-CC = gcc-9
+ifndef CC
+CC = clang
+endif
 
 # include folder 
 INC_DIR += -I ./src/inc
